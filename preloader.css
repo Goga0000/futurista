@@ -1,0 +1,55 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+#preloader {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999999998;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  background: #ff5a1f;
+  opacity: 1;
+  transition: opacity 0.85s ease-out;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+#preloader.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#preloader canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+}
+
+/* Скрытый контейнер для <video>: часть движков не крутят поток без узла в DOM */
+.preloader-video-sink {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  pointer-events: none;
+}
+
+#main-content {
+  min-height: 100vh;
+}
