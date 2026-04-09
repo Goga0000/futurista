@@ -43,11 +43,12 @@ body {
   position: absolute;
   left: 0;
   top: 0;
-  width: 0;
-  height: 0;
+  width: 2px;
+  height: 2px;
+  opacity: 0.01;
   overflow: hidden;
-  clip-path: inset(50%);
   pointer-events: none;
+  z-index: -1;
 }
 
 #main-content {
