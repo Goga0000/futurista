@@ -1,6 +1,6 @@
 /**
- * Preloader: WebM panels (Chrome/Edge friendly; Safari may not decode WebM).
- * Пути относительно index.html. После правок: npm run build.
+ * Preloader: панели с VideoTexture (MP4 с CDN). После правок в этом файле обязательно: npm run build.
+ * В странице подключается preloader.bundle.js — не preloader.js.
  */
 import * as THREE from "three";
 
