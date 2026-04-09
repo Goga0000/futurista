@@ -9,7 +9,7 @@ const VIDEO_URLS = [
   "https://futurista-world-new-zone.b-cdn.net/preview/video%20preview/CK%20ONE/00086400web-mp4-h264.mp4",
   "https://futurista-world-new-zone.b-cdn.net/preview/video%20preview/Prada%20LG/00086400web-mp4-h264.mp4",
   "https://futurista-world-new-zone.b-cdn.net/preview/video%20preview/versace%20versace/00086400web-mp4-h264.mp4",
-  "https://futurista-world-new-zone.b-cdn.net/preview/video%20preview/feragamo%20fantasy%20and%20reality/00090000web-mp4-h264.mp4,
+  "https://futurista-world-new-zone.b-cdn.net/preview/video%20preview/feragamo%20fantasy%20and%20reality/00090000web-mp4-h264.mp4",
   "https://futurista-world-new-zone.b-cdn.net/preview/video%20preview/versace%20ss19/00090000web-mp4-h264.mp4",
   "https://futurista-world-new-zone.b-cdn.net/preview/video%20preview/puma%20selena%20gomez/00086400web-mp4-h264.mp4",
 ];
