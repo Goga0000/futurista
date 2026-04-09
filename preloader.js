@@ -624,7 +624,7 @@ function main() {
     video.setAttribute("webkit-playsinline", "");
     video.setAttribute("autoplay", "");
     video.style.cssText =
-      "position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;";
+      "position:absolute;left:0;top:0;width:2px;height:2px;opacity:0.01;pointer-events:none;";
     const src = VIDEO_URLS[i];
     if (videoNeedsCrossOrigin(src)) {
       video.crossOrigin = "anonymous";
@@ -811,6 +811,56 @@ function main() {
   let rafId = 0;
   let teardownCalled = false;
   let videoKickAcc = 0;
+  let resumeAfterAssemblyDone = false;
+
+  // #region agent log
+  let dbgLoggedAssembleStart = false;
+  let dbgLoggedAssembleEnd = false;
+  let dbgLoggedMidSpin = false;
+  let dbgSpinFrames = 0;
+  function dbgPreloader(payload) {
+    fetch("http://127.0.0.1:7725/ingest/1af8d767-b834-4bd5-b8c8-657ba82ce078", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Debug-Session-Id": "bd4e14",
+      },
+      body: JSON.stringify({
+        sessionId: "bd4e14",
+        timestamp: Date.now(),
+        runId: "debug-sphere-video",
+        ...payload,
+      }),
+    }).catch(() => {});
+  }
+  function dbgVideoSnapshot(label, hypothesisId, extra = {}) {
+    const snap = videos.map((v, i) =>
+      v
+        ? {
+            i,
+            paused: v.paused,
+            readyState: v.readyState,
+            videoWidth: v.videoWidth,
+            videoHeight: v.videoHeight,
+            currentTime: v.currentTime,
+            error: v.error ? String(v.error) : null,
+          }
+        : { i, null: true },
+    );
+    let texEligible = 0;
+    for (let ti = 0; ti < textures.length; ti++) {
+      const t = textures[ti];
+      const vid = videos[ti];
+      if (t && t.isVideoTexture && vid && vid.readyState >= 2) texEligible++;
+    }
+    dbgPreloader({
+      location: "preloader.js:dbgVideoSnapshot",
+      message: label,
+      hypothesisId,
+      data: { videos: snap, texEligible, canUseWebGLVideo, ...extra },
+    });
+  }
+  // #endregion
 
   function startExitSequence() {
     if (fadeScheduled) return;
@@ -936,6 +986,41 @@ function main() {
       globalAssemblyStartTime !== null &&
       now - globalAssemblyStartTime >= ASSEMBLE_DURATION_MS;
     spinning = assemblyDone;
+    if (assemblyDone && !resumeAfterAssemblyDone) {
+      resumeAfterAssemblyDone = true;
+      resumeAllVideos();
+    }
+
+    // #region agent log
+    if (globalAssemblyStartTime !== null && !dbgLoggedAssembleStart) {
+      dbgLoggedAssembleStart = true;
+      dbgVideoSnapshot("H1_assembly_clock_just_started", "H1");
+    }
+    if (assemblyDone && !dbgLoggedAssembleEnd) {
+      dbgLoggedAssembleEnd = true;
+      const p0 = panels.find(Boolean);
+      let shaderUniforms = null;
+      if (
+        p0?.mesh?.material?.isShaderMaterial &&
+        p0.mesh.material.uniforms
+      ) {
+        shaderUniforms = {
+          uPlaneAspect: p0.mesh.material.uniforms.uPlaneAspect?.value,
+          uVideoAspect: p0.mesh.material.uniforms.uVideoAspect?.value,
+        };
+      }
+      dbgVideoSnapshot("H2_assembly_duration_elapsed_sphere_spinning", "H2", {
+        kAssembly,
+        bendT,
+        shaderUniforms,
+      });
+    }
+    if (spinning) dbgSpinFrames++;
+    if (spinning && !dbgLoggedMidSpin && dbgSpinFrames === 90) {
+      dbgLoggedMidSpin = true;
+      dbgVideoSnapshot("H3_mid_spin_after_90_frames_spinning", "H3");
+    }
+    // #endregion
 
     for (let i = 0; i < N; i++) {
       const p = panels[i];
