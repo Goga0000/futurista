@@ -1,0 +1,14 @@
+{
+  "name": "futurista-preloader",
+  "private": true,
+  "scripts": {
+    "build": "esbuild preloader.js --bundle --format=iife --platform=browser --minify --outfile=preloader.bundle.js",
+    "serve": "npx --yes serve ."
+  },
+  "dependencies": {
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}
